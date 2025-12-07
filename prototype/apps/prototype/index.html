@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prenatal Story Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              sage: {
+                50: '#f4f7f4',
+                100: '#e3ebe3',
+                200: '#c5d8c5',
+                300: '#9bbd9b',
+                400: '#729c72',
+                500: '#527f52',
+                600: '#3f633f',
+                700: '#344f34',
+                800: '#2a3e2a',
+                900: '#233323',
+              },
+              warm: {
+                50: '#fdfbf7',
+                100: '#fbf7ef',
+                200: '#f5eadc',
+                300: '#ebd6be',
+                400: '#dfba98',
+                500: '#d09b73',
+                600: '#c27e57',
+                700: '#a26245',
+                800: '#86503c',
+                900: '#6d4234',
+              }
+            },
+            fontFamily: {
+              sans: ['Nunito', 'sans-serif'],
+              serif: ['Lora', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+</head>
+  <body class="bg-warm-50 text-stone-800 antialiased transition-colors duration-300 dark:bg-stone-900 dark:text-stone-100">
+    <div id="root"></div>
+  </body>
+</html>

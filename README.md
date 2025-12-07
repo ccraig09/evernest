@@ -81,9 +81,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
 ```
 evernest/
-├── prisma/
-│   └── schema.prisma       # Database schema
-├── src/
+├── src/                    # Production Next.js app
 │   ├── app/
 │   │   ├── (app)/          # Authenticated app routes
 │   │   │   ├── dashboard/  # Main dashboard
@@ -107,19 +105,26 @@ evernest/
 │   └── server/
 │       ├── story-service.ts # Story business logic
 │       └── utils.ts        # Server-only utilities
+├── prototype/              # Original Vite prototype (reference)
+│   ├── apps/prototype/     # Vite + React prototype app
+│   ├── flows/              # User flow diagrams
+│   ├── notes/              # Design notes
+│   └── README.md           # Prototype documentation
+├── prisma/
+│   └── schema.prisma       # Database schema
 └── docs/
     └── architecture.md     # Architecture overview
 ```
 
 ## API Routes
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | /api/stories | Generate a new story |
-| GET | /api/stories | List user's stories |
-| GET | /api/stories/[id] | Get a single story |
-| PATCH | /api/stories/[id] | Toggle favorite |
-| DELETE | /api/stories/[id] | Delete a story |
+| Method | Path              | Description          |
+| ------ | ----------------- | -------------------- |
+| POST   | /api/stories      | Generate a new story |
+| GET    | /api/stories      | List user's stories  |
+| GET    | /api/stories/[id] | Get a single story   |
+| PATCH  | /api/stories/[id] | Toggle favorite      |
+| DELETE | /api/stories/[id] | Delete a story       |
 
 ## Scripts
 
@@ -147,12 +152,14 @@ EverNest uses a warm, calming color palette:
 ## Development
 
 This project follows strict TypeScript practices and includes:
+
 - ESLint for code quality
 - Jest for testing
 - Prisma for type-safe database access
 - shadcn/ui for consistent component design
 
 Run tests before committing:
+
 ```bash
 npm run lint
 npm run test
@@ -164,5 +171,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-*EverNest provides creative storytelling for bonding purposes only. It does not provide medical advice.*
-
+_EverNest provides creative storytelling for bonding purposes only. It does not provide medical advice._
