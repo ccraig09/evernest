@@ -1,0 +1,137 @@
+// ============================================================================
+// EverNest Prisma Schema (Prisma 7+)
+// ============================================================================
+
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../src/generated/prisma"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// Auth.js / NextAuth Models
+// ============================================================================
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @map("user_id")
+  type                     String
+  provider                 String
+  providerAccountId        String  @map("provider_account_id")
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================================
+// User Model
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  accounts Account[]
+  sessions Session[]
+  profiles UserProfile[]
+  stories  Story[]
+
+  @@map("users")
+}
+
+// ============================================================================
+// User Profile Model
+// ============================================================================
+
+model UserProfile {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  parentOneName   String    @map("parent_one_name")
+  parentTwoName   String?   @map("parent_two_name")
+  babyNickname    String?   @map("baby_nickname")
+  dueDate         DateTime? @map("due_date")
+  faithPreference String    @default("non_religious") @map("faith_preference")
+  defaultTheme    String?   @map("default_theme")
+  defaultLength   String?   @map("default_length")
+  darkMode        Boolean   @default(false) @map("dark_mode")
+  fontSize        String    @default("normal") @map("font_size")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stories Story[]
+
+  @@index([userId])
+  @@map("user_profiles")
+}
+
+// ============================================================================
+// Story Model
+// ============================================================================
+
+model Story {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  profileId       String?  @map("profile_id")
+  title           String
+  content         String   @db.Text
+  theme           String
+  length          String
+  faithPreference String   @map("faith_preference")
+  parentOneName   String   @map("parent_one_name")
+  parentTwoName   String?  @map("parent_two_name")
+  babyNickname    String?  @map("baby_nickname")
+  dueDate         String?  @map("due_date")
+  configHash      String   @map("config_hash")
+  wordCount       Int      @map("word_count")
+  isFavorite      Boolean  @default(false) @map("is_favorite")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile UserProfile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, configHash])
+  @@index([userId])
+  @@index([profileId])
+  @@index([configHash])
+  @@map("stories")
+}

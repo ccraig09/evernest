@@ -1,0 +1,181 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   EverNest Design Tokens
+   A warm, calming aesthetic for prenatal storytelling
+   ============================================================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-brand-sans);
+  --font-serif: var(--font-brand-serif);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  /* Sage green palette */
+  --color-sage-50: var(--sage-50);
+  --color-sage-100: var(--sage-100);
+  --color-sage-200: var(--sage-200);
+  --color-sage-300: var(--sage-300);
+  --color-sage-400: var(--sage-400);
+  --color-sage-500: var(--sage-500);
+  --color-sage-600: var(--sage-600);
+  --color-sage-700: var(--sage-700);
+  --color-sage-800: var(--sage-800);
+  --color-sage-900: var(--sage-900);
+  /* Warm stone palette */
+  --color-warm-50: var(--warm-50);
+  --color-warm-100: var(--warm-100);
+  --color-warm-200: var(--warm-200);
+  --color-warm-300: var(--warm-300);
+  --color-warm-400: var(--warm-400);
+  --color-warm-500: var(--warm-500);
+  --color-warm-600: var(--warm-600);
+  --color-warm-700: var(--warm-700);
+  --color-warm-800: var(--warm-800);
+  --color-warm-900: var(--warm-900);
+}
+
+/* Light mode (default) - warm, creamy, calming */
+:root {
+  --radius: 1rem;
+  
+  /* Sage green palette */
+  --sage-50: #f6f7f6;
+  --sage-100: #e3e7e3;
+  --sage-200: #c7cfc7;
+  --sage-300: #a3b1a3;
+  --sage-400: #7d917d;
+  --sage-500: #627562;
+  --sage-600: #4d5d4d;
+  --sage-700: #3f4b3f;
+  --sage-800: #353f35;
+  --sage-900: #2d352d;
+  
+  /* Warm stone palette */
+  --warm-50: #faf9f7;
+  --warm-100: #f5f3ef;
+  --warm-200: #e8e4dc;
+  --warm-300: #d6cfc3;
+  --warm-400: #b9ae9d;
+  --warm-500: #9e9180;
+  --warm-600: #8a7d6d;
+  --warm-700: #73685b;
+  --warm-800: #5f564c;
+  --warm-900: #4e473f;
+  
+  /* Semantic tokens */
+  --background: #fdfcfa;
+  --foreground: #3d3a36;
+  --card: #ffffff;
+  --card-foreground: #3d3a36;
+  --popover: #ffffff;
+  --popover-foreground: #3d3a36;
+  --primary: #627562;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f3ef;
+  --secondary-foreground: #4e473f;
+  --muted: #f5f3ef;
+  --muted-foreground: #8a7d6d;
+  --accent: #e8e4dc;
+  --accent-foreground: #3d3a36;
+  --destructive: #dc2626;
+  --border: #e8e4dc;
+  --input: #f5f3ef;
+  --ring: #627562;
+}
+
+/* Dark mode - cozy, warm darkness */
+.dark {
+  --background: #1c1a18;
+  --foreground: #f5f3ef;
+  --card: #262421;
+  --card-foreground: #f5f3ef;
+  --popover: #1c1a18;
+  --popover-foreground: #f5f3ef;
+  --primary: #a3b1a3;
+  --primary-foreground: #1c1a18;
+  --secondary: #353230;
+  --secondary-foreground: #e8e4dc;
+  --muted: #2a2826;
+  --muted-foreground: #9e9180;
+  --accent: #3d3a36;
+  --accent-foreground: #f5f3ef;
+  --destructive: #f87171;
+  --border: #3d3a36;
+  --input: #2a2826;
+  --ring: #a3b1a3;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  /* Typography for story content */
+  .prose-story {
+    @apply leading-relaxed;
+    font-family: var(--font-brand-serif, Georgia, 'Times New Roman', serif);
+  }
+  
+  .prose-story p {
+    @apply mb-4;
+  }
+}
+
+@layer utilities {
+  /* Fade-in animation for page transitions */
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Gentle pulse for loading states */
+  .animate-gentle-pulse {
+    animation: gentlePulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes gentlePulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+}
+
