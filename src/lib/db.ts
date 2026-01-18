@@ -1,10 +1,13 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient, Prisma } from "@/generated/prisma";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// Important: Configure Neon to use WebSockets for serverless environments
+neonConfig.webSocketConstructor = ws;
+
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
@@ -13,33 +16,42 @@ function createPrismaClient() {
     throw new Error("DATABASE_URL environment variable is not set");
   }
 
-  const logConfig =
+  const logConfig: Prisma.LogLevel[] =
     process.env.NODE_ENV === "development"
-      ? (["query", "error", "warn"] as const)
-      : (["error"] as const);
+      ? ["query", "error", "warn"]
+      : ["error"];
 
-  // Use Neon adapter for production (serverless), PrismaPg for local development
+  // Check if we are running in a Vercel/Neon environment or if the URL specifies Neon
+  // We default to the Neon adapter if it looks like a Neon URL (postgres URL on port 5432 usually,
+  // but specifically neon.tech/neon.db domains are clear indicators)
   const isNeonDatabase =
     connectionString.includes("neon.tech") ||
     connectionString.includes("neon.db");
 
-  if (isNeonDatabase) {
-    const adapter = new PrismaNeon({ connectionString });
+  // For testing purposes, we can force the standard adapter if needed (e.g. Docker local)
+  const isLocalDocker = !isNeonDatabase;
+
+  if (isLocalDocker) {
+    // Local development with standard Postgres (typical Docker setup)
+    // We use PrismaPg adapter here mostly for consistency, but standard PrismaClient would also work.
+    const adapter = new PrismaPg({ connectionString });
     return new PrismaClient({
       adapter,
       log: logConfig,
     });
   }
 
-  // Local development with standard Postgres (Docker)
-  const adapter = new PrismaPg({ connectionString });
+  // Serverless / Production (Neon)
+  const pool = new Pool({ connectionString });
+  // Cast to any to avoid strict type mismatch between @neondatabase/serverless Pool and Prisma adapter expectations
+  const adapter = new PrismaNeon(pool as any);
   return new PrismaClient({
     adapter,
     log: logConfig,
   });
 }
 
-export const db = globalForPrisma.prisma ?? createPrismaClient();
+export const db = globalForPrisma.prisma || createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = db;

@@ -1,36 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Type, Bot, Check } from 'lucide-react';
+import { Moon, Sun, Type } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { AIProvider, AI_PROVIDER_LABELS } from '@/lib/types';
-
-// Key for localStorage
-const AI_PROVIDER_KEY = 'evernest-ai-provider';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const [aiProvider, setAiProvider] = useState<AIProvider>(AIProvider.GEMINI);
-  const [saved, setSaved] = useState(false);
-
-  // Load saved AI provider preference
-  useEffect(() => {
-    const savedProvider = localStorage.getItem(AI_PROVIDER_KEY);
-    if (savedProvider && Object.values(AIProvider).includes(savedProvider as AIProvider)) {
-      setAiProvider(savedProvider as AIProvider);
-    }
-  }, []);
-
-  // Save AI provider preference
-  const handleProviderChange = (provider: AIProvider) => {
-    setAiProvider(provider);
-    localStorage.setItem(AI_PROVIDER_KEY, provider);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   return (
     <div className="animate-fadeIn space-y-8 pb-20">
@@ -38,53 +15,7 @@ export default function SettingsPage() {
         <h1 className="font-serif text-2xl text-foreground">Settings</h1>
       </header>
 
-      {/* AI Storyteller Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            <Bot size={16} />
-            AI Storyteller
-          </CardTitle>
-          <CardDescription>
-            Choose which AI model generates your stories
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-3">
-            {Object.values(AIProvider).map((provider) => (
-              <button
-                key={provider}
-                onClick={() => handleProviderChange(provider)}
-                className={cn(
-                  'flex items-center justify-between rounded-lg border p-4 text-left transition-all',
-                  aiProvider === provider
-                    ? 'border-sage-500 bg-sage-50 dark:bg-sage-900/50'
-                    : 'border-border hover:border-sage-300'
-                )}
-              >
-                <div>
-                  <p className="font-medium text-foreground">
-                    {AI_PROVIDER_LABELS[provider]}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {provider === AIProvider.GEMINI
-                      ? 'Recommended – Google\'s latest AI model'
-                      : 'OpenAI\'s GPT-4o model (requires paid API key)'}
-                  </p>
-                </div>
-                {aiProvider === provider && (
-                  <Check className="h-5 w-5 text-sage-600 dark:text-sage-400" />
-                )}
-              </button>
-            ))}
-          </div>
-          {saved && (
-            <p className="text-sm text-sage-600 dark:text-sage-400">
-              ✓ AI provider saved
-            </p>
-          )}
-        </CardContent>
-      </Card>
+
 
       <Card>
         <CardHeader>

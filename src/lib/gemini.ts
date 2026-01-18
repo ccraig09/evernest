@@ -77,7 +77,8 @@ function constructPrompt(config: StoryGenerationConfig): string {
     The story should be rhythmic, calming, and foster a deep sense of safety and love.
     Avoid any scary elements, loud noises, or negative conflict.
     Use simple, melodic language.
-    Ensure every sentence ends with proper punctuation and a space before the next sentence begins.
+    Ensure every sentence ends with proper punctuation.
+    Do not add spaces before punctuation marks like periods, commas, or question marks.
     Format the content with paragraph breaks for readability.
 
     Return the result strictly as a JSON object with the keys: "title" and "content".
@@ -131,7 +132,9 @@ export async function generateStory(
 
     // Post-processing to fix common grammar spacing issues
     if (jsonResponse.content) {
-      jsonResponse.content = jsonResponse.content.replace(/([.!?])([A-Z])/g, '$1 $2');
+      jsonResponse.content = jsonResponse.content
+        .replace(/([.!?])([A-Z])/g, '$1 $2') // Ensure space after punctuation
+        .replace(/\s+([.,!?])/g, '$1'); // Remove space before punctuation
     }
 
     return jsonResponse;

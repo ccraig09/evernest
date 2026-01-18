@@ -77,6 +77,16 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
+## Documentation
+- [CHANGELOG.md](CHANGELOG.md) - Project history (Living Document).
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Hosting guide (Vercel + Neon).
+- [TESTING.md](TESTING.md) - Testing strategy and specs.
+
+## Agent Skills
+This project is equipped with the following Agent Skills to assist with development:
+- **DEPLOYMENT_OPS**: Standards for reliable Vercel/Neon deployments.
+- **STORY_QA**: Protocols for testing the story generation user flow.
+
 ## Project Structure
 
 ```
@@ -134,20 +144,8 @@ npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run test         # Run Jest tests
-npm run db:generate  # Generate Prisma client
 npm run db:push      # Push schema to database
-npm run db:migrate   # Run migrations
-npm run db:studio    # Open Prisma Studio
 ```
-
-## Design System
-
-EverNest uses a warm, calming color palette:
-
-- **Primary**: Sage green (`#627562`) - calm, natural, nurturing
-- **Background**: Warm cream (`#fdfcfa`) / Cozy dark (`#1c1a18`)
-- **Typography**: DM Sans (sans) + Lora (serif for story content)
-- **Borders**: Soft warm stone tones
 
 ## Development
 

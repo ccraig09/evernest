@@ -5,6 +5,7 @@ import { Heart, Trash2, Calendar, BookOpen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { Modal } from '@/components/ui/modal';
 import {
   StoryTheme,
   STORY_THEME_LABELS,
@@ -15,7 +16,7 @@ export default function LibraryPage() {
   const [stories, setStories] = useState<StoryListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'favorites'>('all');
-  const [expandedStoryId, setExpandedStoryId] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<StoryListItem | null>(null);
 
   const fetchStories = useCallback(async () => {
     setIsLoading(true);
@@ -50,6 +51,10 @@ export default function LibraryPage() {
         setStories((prev) =>
           prev.map((s) => (s.id === storyId ? result.story : s))
         );
+        // Also update selected story if it's the one being toggled
+        if (selectedStory?.id === storyId) {
+            setSelectedStory(result.story);
+        }
       }
     } catch (err) {
       console.error('Failed to toggle favorite:', err);
@@ -65,6 +70,9 @@ export default function LibraryPage() {
       });
       if (response.ok) {
         setStories((prev) => prev.filter((s) => s.id !== storyId));
+        if (selectedStory?.id === storyId) {
+            setSelectedStory(null);
+        }
       }
     } catch (err) {
       console.error('Failed to delete story:', err);
@@ -120,7 +128,8 @@ export default function LibraryPage() {
           {stories.map((story) => (
             <Card
               key={story.id}
-              className="group transition-transform hover:scale-[1.01]"
+              className="group cursor-pointer transition-all hover:scale-[1.01] hover:shadow-md"
+              onClick={() => setSelectedStory(story)}
             >
               <CardContent className="p-5">
                 <div className="mb-2 flex items-start justify-between">
@@ -133,7 +142,10 @@ export default function LibraryPage() {
                     </h3>
                   </div>
                   <button
-                    onClick={() => handleToggleFavorite(story.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleFavorite(story.id);
+                    }}
                     className={cn(
                       'rounded-full p-2 transition-colors',
                       story.isFavorite
@@ -148,36 +160,9 @@ export default function LibraryPage() {
                   </button>
                 </div>
 
-                <p
-                  className={cn(
-                    'mb-4 text-sm text-muted-foreground',
-                    expandedStoryId === story.id ? '' : 'line-clamp-2'
-                  )}
-                >
+                <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                   {story.content}
                 </p>
-
-                {expandedStoryId !== story.id && (
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="h-auto p-0 text-sage-600 dark:text-sage-400"
-                    onClick={() => setExpandedStoryId(story.id)}
-                  >
-                    Read more
-                  </Button>
-                )}
-
-                {expandedStoryId === story.id && (
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="h-auto p-0 text-sage-600 dark:text-sage-400"
-                    onClick={() => setExpandedStoryId(null)}
-                  >
-                    Show less
-                  </Button>
-                )}
 
                 <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
@@ -185,7 +170,10 @@ export default function LibraryPage() {
                     {new Date(story.createdAt).toLocaleDateString()}
                   </div>
                   <button
-                    onClick={() => handleDelete(story.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(story.id);
+                    }}
                     className="rounded p-1 text-muted-foreground/30 opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
                   >
                     <Trash2 size={14} />
@@ -196,6 +184,46 @@ export default function LibraryPage() {
           ))}
         </div>
       )}
+
+      {/* Story Reading Modal */}
+      <Modal isOpen={!!selectedStory} onClose={() => setSelectedStory(null)}>
+        {selectedStory && (
+            <div className="space-y-6">
+                <div className="space-y-2 pt-2">
+                    <div className="flex items-center justify-between pr-10">
+                        <span className="inline-flex items-center rounded-full bg-sage-100 px-2.5 py-0.5 text-xs font-medium text-sage-800 dark:bg-sage-900/50 dark:text-sage-300">
+                             {STORY_THEME_LABELS[selectedStory.theme as StoryTheme]}
+                        </span>
+                        <div className="flex items-center gap-2">
+                           <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleToggleFavorite(selectedStory.id)}
+                              className={cn(
+                                'h-8 w-8 rounded-full',
+                                selectedStory.isFavorite ? 'text-red-500' : 'text-muted-foreground'
+                              )}
+                           >
+                             <Heart className={cn("h-4 w-4", selectedStory.isFavorite && "fill-current")} />
+                           </Button>
+                        </div>
+                    </div>
+                     <h2 className="font-serif text-3xl font-bold leading-tight text-foreground md:text-4xl">
+                        {selectedStory.title}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                         Generated on {new Date(selectedStory.createdAt).toLocaleDateString()}
+                    </p>
+                </div>
+
+                <div className="max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+                    <div className="prose-story whitespace-pre-line text-lg leading-relaxed text-foreground/90">
+                        {selectedStory.content}
+                    </div>
+                </div>
+            </div>
+        )}
+      </Modal>
     </div>
   );
 }

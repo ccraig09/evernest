@@ -74,9 +74,7 @@ export function AppShell({ children, user }: AppShellProps) {
 
           {/* User Menu */}
           <div className="flex items-center gap-4">
-            <div className="hidden text-sm text-muted-foreground md:block">
-              {user.name || user.email}
-            </div>
+
             <Button
               variant="ghost"
               size="sm"

@@ -29,12 +29,10 @@ export enum StoryLength {
 
 export enum AIProvider {
   GEMINI = "gemini",
-  OPENAI = "openai",
 }
 
 export const AI_PROVIDER_LABELS: Record<AIProvider, string> = {
   [AIProvider.GEMINI]: "Google Gemini",
-  [AIProvider.OPENAI]: "OpenAI GPT-4o",
 };
 
 // Human-readable labels for enums

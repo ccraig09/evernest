@@ -30,16 +30,8 @@ export default function GeneratePage() {
     parentTwoName: '',
     babyNickname: '',
     dueDate: '',
-    aiProvider: AIProvider.GEMINI, // Default to Gemini
+    aiProvider: AIProvider.GEMINI,
   });
-
-  // Load saved AI provider preference from localStorage
-  useEffect(() => {
-    const savedProvider = localStorage.getItem(AI_PROVIDER_KEY);
-    if (savedProvider && Object.values(AIProvider).includes(savedProvider as AIProvider)) {
-      setConfig(prev => ({ ...prev, aiProvider: savedProvider as AIProvider }));
-    }
-  }, []);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
