@@ -30,37 +30,32 @@ function createPrismaClient() {
       : ["error"];
 
   // Check if we are running in a Vercel/Neon environment or if the URL specifies Neon
-  // We default to the Neon adapter if it looks like a Neon URL (postgres URL on port 5432 usually,
-  // but specifically neon.tech/neon.db domains are clear indicators)
   const isNeonDatabase =
     connectionString.includes("neon.tech") ||
     connectionString.includes("neon.db");
 
-  // For testing purposes, we can force the standard adapter if needed (e.g. Docker local)
-  const isLocalDocker = !isNeonDatabase;
-
   console.log("DB DEBUG: isNeonDatabase:", isNeonDatabase);
 
-  if (isLocalDocker) {
-    console.log("DB DEBUG: Using Local Docker path");
-    // Local development with standard Postgres (typical Docker setup)
-    // We use PrismaPg adapter here mostly for consistency, but standard PrismaClient would also work.
-    const adapter = new PrismaPg({ connectionString });
+  // Use Neon adapter if it's a Neon URL (production/preview)
+  if (isNeonDatabase) {
+    console.log("DB DEBUG: Using Neon Serverless path");
+    const pool = new Pool({ connectionString });
+    // Cast to any to avoid strict type mismatch
+    const adapter = new PrismaNeon(pool as any);
     return new PrismaClient({
       adapter,
       log: logConfig,
     });
   }
 
-  console.log("DB DEBUG: Using Neon Serverless path");
-  // Serverless / Production (Neon)
-  const pool = new Pool({ connectionString });
-
-  // Cast to any to avoid strict type mismatch between @neondatabase/serverless Pool and Prisma adapter expectations
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const adapter = new PrismaNeon(pool as any);
+  // Fallback to standard connection for local/docker
+  console.log("DB DEBUG: Using Standard Prisma (Local/Docker)");
   return new PrismaClient({
-    adapter,
+    datasources: {
+      db: {
+        url: connectionString,
+      },
+    },
     log: logConfig,
   });
 }
