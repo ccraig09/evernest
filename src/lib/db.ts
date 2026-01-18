@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@/generated/prisma";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool, neonConfig } from "@neondatabase/serverless";
