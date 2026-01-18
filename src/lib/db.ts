@@ -57,7 +57,7 @@ function createPrismaClient() {
       },
     },
     log: logConfig,
-  });
+  } as any);
 }
 
 export const db = globalForPrisma.prisma || createPrismaClient();
