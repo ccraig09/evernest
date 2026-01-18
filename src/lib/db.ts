@@ -12,6 +12,14 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
 
+  console.log("DB DEBUG: starting createPrismaClient");
+  if (connectionString) {
+      console.log("DB DEBUG: connectionString found, length:", connectionString.length);
+      console.log("DB DEBUG: connectionString start:", connectionString.substring(0, 15) + "...");
+  } else {
+      console.log("DB DEBUG: connectionString IS MISSING");
+  }
+
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is not set");
   }
@@ -31,7 +39,10 @@ function createPrismaClient() {
   // For testing purposes, we can force the standard adapter if needed (e.g. Docker local)
   const isLocalDocker = !isNeonDatabase;
 
+  console.log("DB DEBUG: isNeonDatabase:", isNeonDatabase);
+
   if (isLocalDocker) {
+    console.log("DB DEBUG: Using Local Docker path");
     // Local development with standard Postgres (typical Docker setup)
     // We use PrismaPg adapter here mostly for consistency, but standard PrismaClient would also work.
     const adapter = new PrismaPg({ connectionString });
@@ -41,9 +52,12 @@ function createPrismaClient() {
     });
   }
 
+  console.log("DB DEBUG: Using Neon Serverless path");
   // Serverless / Production (Neon)
   const pool = new Pool({ connectionString });
+
   // Cast to any to avoid strict type mismatch between @neondatabase/serverless Pool and Prisma adapter expectations
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adapter = new PrismaNeon(pool as any);
   return new PrismaClient({
     adapter,
