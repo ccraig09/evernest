@@ -14,11 +14,22 @@ function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
 
   console.log("DB DEBUG: starting createPrismaClient");
+  console.log(
+    "DB DEBUG: Environment keys available:",
+    Object.keys(process.env).join(", "),
+  );
+
   if (connectionString) {
-      console.log("DB DEBUG: connectionString found, length:", connectionString.length);
-      console.log("DB DEBUG: connectionString start:", connectionString.substring(0, 15) + "...");
+    console.log(
+      "DB DEBUG: connectionString found, length:",
+      connectionString.length,
+    );
+    console.log(
+      "DB DEBUG: connectionString start:",
+      connectionString.substring(0, 15) + "...",
+    );
   } else {
-      console.log("DB DEBUG: connectionString IS MISSING");
+    console.log("DB DEBUG: connectionString IS MISSING");
   }
 
   if (!connectionString) {
@@ -53,7 +64,7 @@ function createPrismaClient() {
   console.log("DB DEBUG: Using Standard Prisma (Local/Docker) via PrismaPg");
   const pool = new PgPool({ connectionString });
   const adapter = new PrismaPg(pool);
-  
+
   return new PrismaClient({
     adapter,
     log: logConfig,
