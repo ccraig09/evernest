@@ -16,11 +16,14 @@ This skill promotes a "commit often" philosophy using atomic units of work and C
 
 ## How to use it
 
-1.  **Stage Changes**:
+1.  **Update Changelog**:
+    - Before committing, use the `changelog-management` skill to record the changes and rationale in the living `changelog.md` document.
+
+2.  **Stage Changes**:
     - Stage _only_ the files related to the specific change.
     - `git add path/to/file` (Avoid `git add .` unless you are sure all changes belong together).
 
-2.  **Commit Message Format**:
+3.  **Commit Message Format**:
     - Follow **Conventional Commits**: `<type>: <description>`
     - **Types**:
       - `feat`: A new feature
@@ -32,7 +35,7 @@ This skill promotes a "commit often" philosophy using atomic units of work and C
       - `test`: Adding missing tests or correcting existing tests
       - `chore`: Changes to the build process or auxiliary tools and libraries (e.g., generator skills)
 
-3.  **Execute Commit**:
+4.  **Execute Commit**:
     - ```bash
       git commit -m "type: description"
       ```
