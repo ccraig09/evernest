@@ -8,6 +8,8 @@ export default defineConfig({
   schema: path.join("prisma", "schema.prisma"),
 
   datasource: {
-    url: process.env.DATABASE_URL ?? "",
+    url:
+      process.env.DATABASE_URL ??
+      "postgresql://johndoe:randompassword@localhost:5432/mydb",
   },
 });
