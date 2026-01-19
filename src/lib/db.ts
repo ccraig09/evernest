@@ -1,8 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool, neonConfig } from "@neondatabase/serverless";
-import { Pool as PgPool } from "pg";
 import ws from "ws";
 
 // Important: Configure Neon to use WebSockets for serverless environments
@@ -60,15 +58,17 @@ function createPrismaClient() {
     });
   }
 
-  // Fallback to standard connection for local/docker using PrismaPg adapter
-  console.log("DB DEBUG: Using Standard Prisma (Local/Docker) via PrismaPg");
-  const pool = new PgPool({ connectionString });
-  const adapter = new PrismaPg(pool);
+  // Fallback to standard connection for local/docker
+  console.log("DB DEBUG: Using Standard Prisma (Local/Docker) via datasources");
 
   return new PrismaClient({
-    adapter,
+    datasources: {
+      db: {
+        url: connectionString,
+      },
+    },
     log: logConfig,
-  });
+  } as any);
 }
 
 export const db = globalForPrisma.prisma || createPrismaClient();
