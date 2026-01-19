@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { Pool, neonConfig } from "@neondatabase/serverless";
+import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 
 // Important: Configure Neon to use WebSockets for serverless environments
@@ -13,7 +13,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
 
-  console.log("DB DEBUG: starting createPrismaClient (v7)");
+  console.log("DB DEBUG: starting createPrismaClient (v7 simplified)");
 
   if (!connectionString) {
     console.error("DB DEBUG: DATABASE_URL is missing!");
@@ -26,11 +26,12 @@ function createPrismaClient() {
       : ["error"];
 
   try {
-    console.log("DB DEBUG: Initializing PrismaNeon adapter");
-    const pool = new Pool({ connectionString });
-    const adapter = new PrismaNeon(pool as any);
+    console.log(
+      "DB DEBUG: Initializing PrismaNeon adapter with direct connectionString",
+    );
+    // Prisma 7 simplified pattern - avoiding manual Pool creation
+    const adapter = new PrismaNeon({ connectionString });
 
-    // In Prisma 7, with url removed from schema, we MUST use adapter
     return new PrismaClient({
       adapter,
       log: logConfig,
