@@ -21,6 +21,8 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@google/genai": "^1.0.0",
     "@hookform/resolvers": "^3.9.1",
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "^7.2.0",
     "@prisma/client": "^7.1.0",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -33,6 +35,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@types/ws": "^8.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -47,6 +50,7 @@
     "react-hook-form": "^7.54.2",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
+    "ws": "^8.19.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
