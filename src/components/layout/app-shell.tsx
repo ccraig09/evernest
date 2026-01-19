@@ -30,7 +30,7 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function AppShell({ children, user }: AppShellProps) {
+export function AppShell({ children, user: _user }: AppShellProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

@@ -6,7 +6,7 @@ describe('cn', () => {
   });
 
   it('should handle conditional classes', () => {
-    expect(cn('foo', false && 'bar', 'baz')).toBe('foo baz');
+    expect(cn('foo', false && 'bar', 'baz')).toBe('foo baz'); // eslint-disable-line no-constant-binary-expression
   });
 
   it('should merge conflicting Tailwind classes', () => {

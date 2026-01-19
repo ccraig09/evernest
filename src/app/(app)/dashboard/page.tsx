@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Sparkles, RefreshCw, Heart, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,9 +17,6 @@ import {
   type StoryListItem,
   type StoryGenerationConfig,
 } from '@/lib/types';
-
-// Key for localStorage
-const AI_PROVIDER_KEY = 'evernest-ai-provider';
 
 export default function GeneratePage() {
   const [config, setConfig] = useState<StoryGenerationConfig>({
