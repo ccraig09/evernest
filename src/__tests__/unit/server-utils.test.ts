@@ -8,7 +8,6 @@ import {
   FaithPreference,
   StoryLength,
   StoryTheme,
-  ChildStatus,
   type StoryGenerationConfig,
 } from "@/lib/types";
 

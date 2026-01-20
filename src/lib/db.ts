@@ -41,7 +41,7 @@ function createPrismaClient() {
       const pool = new pg.Pool({ connectionString });
       const adapter = new PrismaPg(pool);
       return new PrismaClient({
-        adapter,
+        adapter: adapter as any,
         log: logConfig,
       });
     }
@@ -53,7 +53,7 @@ function createPrismaClient() {
     const adapter = new PrismaNeon({ connectionString });
 
     return new PrismaClient({
-      adapter,
+      adapter: adapter as any,
       log: logConfig,
     } as any);
   } catch (error) {

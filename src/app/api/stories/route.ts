@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createStory, getUserStories } from "@/server/story-service";
 import { z } from "zod";
-import { FaithPreference, StoryLength, StoryTheme } from "@/lib/types";
-
 import { storyGenerationConfigSchema } from "@/lib/schemas";
 
 // Schema for story generation request
