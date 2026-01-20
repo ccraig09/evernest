@@ -126,7 +126,7 @@ export default function HomePage() {
                     calling to modernize this tradition for a new generation.
                     However, our journey took a difficult turn. During our first
                     trimester, we suffered an unknown miscarriage. For a long
-                    time, I couldn't bring myself to work on this. I paused
+                    time, I couldn&apos;t bring myself to work on this. I paused
                     everything.
                   </p>
                   <p className="text-lg text-slate-600 mb-8">
@@ -169,7 +169,7 @@ export default function HomePage() {
             <FeatureCard
               icon={Heart}
               title="Personalized Stories"
-              description="Stories featuring your names, your baby's nickname, and themes you choose—making each story uniquely yours."
+              description="Stories featuring your names, your baby&apos;s nickname, and themes you choose—making each story uniquely yours."
             />
             <FeatureCard
               icon={BookOpen}
