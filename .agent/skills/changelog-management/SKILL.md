@@ -1,50 +1,48 @@
 ---
 name: changelog-management
-description: Manages a living `changelog.md` document to provide the user with side-by-side visibility of all changes before they are committed. Use this to summarize work blocks and rationales.
+description: Manages the `CHANGELOG.md` file to provide a detailed, timestamped history of project evolution. Use this to document features, fixes, and engineering decisions.
 ---
 
 # Changelog Management Skill
 
-This skill ensures that every meaningful change is documented, visualized, and approved before it is finalized in the git history.
+This skill ensures that every meaningful change is documented in `CHANGELOG.md` with high precision, including timestamps and rationales.
 
 ## When to use this skill
 
-- **Before Committing**: Every time you prepare a `git-atomic-commit`.
-- **Ongoing Work**: To summarize progress during a long task.
-- **Review Request**: When you want the user to see exactly what you've done in a "side-by-side" format.
+- **Before Committing**: Update the changelog as part of your commit preparation.
+- **After a Sprint/Task**: Summarize the work done.
+- **Significant Architecture Changes**: When a decision is made that future-you needs to remember.
 
-## How to use it
+## Rules & Standards
 
-1.  **Maintain Brain/Changelog**:
-    - Keep a file named `changelog.md` in the current conversation's brain directory.
-    - Use a "Current Task" section to describe the active objective.
+1.  **Timezone**: Always use **Tulsa, Oklahoma time (Central Time - CST/CDT)**.
+    - Format: `YYYY-MM-DD HH:mm (Timezone)`
+2.  **Location**: Always edit `CHANGELOG.md` in the **project root**.
+3.  **Format**: Follow [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) but with added detail.
 
-2.  **Visual Diffing**:
-    - Use `render_diffs(file:///path/to/file)` to show precise changes.
-    - For UI or multi-file changes, use `carousel` to group related diffs.
+## How to Update
 
-3.  **The "Why" (Rationale)**:
-    - For every major change, include a "Rationale" or "Intent" section.
-    - Describe _why_ you chose this implementation over others.
-
-4.  **Workflow Integration**:
-    - **Step 1**: Implement changes.
-    - **Step 2**: Update `changelog.md` with diffs and rationales.
-    - **Step 3**: Use `notify_user` to request review of the changelog.
-    - **Step 4**: Upon approval, execute `git-atomic-commit`.
+1.  **Header**: If this is a new release/milestone, create a new `## [Version] - Date` header. If it's ongoing work, append to the `## [Unreleased]` section (or create it if missing).
+2.  **Categories**:
+    - `### Added`: New features.
+    - `### Changed`: Changes in existing functionality.
+    - `### Deprecated`: Soon-to-be removed features.
+    - `### Removed`: Now removed features.
+    - `### Fixed`: Any bug fixes.
+    - `### Security`: In case of vulnerabilities.
+    - `### Dev Notes`: **(Crucial)** Technical context, architectural decisions, or "gotchas" encountered.
 
 ## Example Entry
 
 ```markdown
-## [Task Name]
+## [Unreleased]
 
-**Status**: Pending Review
+### Added
+- [2026-01-20 14:30 CST] Implemented `PrismaAdapter` workaround for local dev to fix type mismatch.
 
-### Changes
+### Fixed
+- [2026-01-20 14:30 CST] Resolved linting errors in `ui.test.tsx` by removing unused React imports.
 
-render_diffs(file:///path/to/db.ts)
-
-### Rationale
-
-- Migrated Prisma connection to use standard datasources because dependencies were causing circular reference errors in Vercel edge runtime.
+### Dev Notes
+- We are currently casting the Prisma adapter to `any` in `src/lib/db.ts`. This is a temporary hack because `@prisma/adapter-pg` v7.x has a type conflict with `PrismaClient` in strict mode. We should revisit this when Prisma v7.1+ is stable.
 ```

@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { generateStory as generateStoryWithAI } from "@/lib/ai-service";
 import { countWords } from "@/lib/utils";
+import { createStorySchema } from "@/lib/schemas";
 import { computeConfigHash } from "./utils";
 import type { StoryGenerationConfig, StoryListItem } from "@/lib/types";
 
@@ -21,7 +22,7 @@ export interface CreateStoryResult {
  */
 export async function checkForDuplicate(
   userId: string,
-  configHash: string
+  configHash: string,
 ): Promise<{ isDuplicate: boolean; existingStoryId?: string }> {
   const existing = await db.story.findFirst({
     where: {
@@ -41,8 +42,14 @@ export async function checkForDuplicate(
  * Create a new story for a user
  */
 export async function createStory(
-  input: CreateStoryInput
+  input: CreateStoryInput,
 ): Promise<CreateStoryResult> {
+  // Validate input
+  const validation = createStorySchema.safeParse(input);
+  if (!validation.success) {
+    throw new Error(`Invalid input: ${validation.error.message}`);
+  }
+
   const { userId, profileId, config } = input;
   const configHash = computeConfigHash(config);
 
@@ -91,6 +98,7 @@ export async function createStory(
       parentTwoName: config.parentTwoName,
       babyNickname: config.babyNickname,
       dueDate: config.dueDate,
+      childStatus: config.childStatus || "prenatal",
       configHash,
       wordCount,
     },
@@ -120,7 +128,7 @@ export async function getUserStories(
     page?: number;
     pageSize?: number;
     favoritesOnly?: boolean;
-  } = {}
+  } = {},
 ): Promise<{ stories: StoryListItem[]; total: number }> {
   const { page = 1, pageSize = 20, favoritesOnly = false } = options;
   const skip = (page - 1) * pageSize;
@@ -160,7 +168,7 @@ export async function getUserStories(
  */
 export async function getStoryById(
   userId: string,
-  storyId: string
+  storyId: string,
 ): Promise<StoryListItem | null> {
   const story = await db.story.findFirst({
     where: {
@@ -188,7 +196,7 @@ export async function getStoryById(
  */
 export async function toggleFavorite(
   userId: string,
-  storyId: string
+  storyId: string,
 ): Promise<StoryListItem | null> {
   const existing = await db.story.findFirst({
     where: { id: storyId, userId },
@@ -218,7 +226,7 @@ export async function toggleFavorite(
  */
 export async function deleteStory(
   userId: string,
-  storyId: string
+  storyId: string,
 ): Promise<boolean> {
   const existing = await db.story.findFirst({
     where: { id: storyId, userId },

@@ -1,35 +1,60 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Sparkles, RefreshCw, Heart, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Sparkles, RefreshCw, Heart, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   StoryTheme,
   StoryLength,
   FaithPreference,
   AIProvider,
+  ChildStatus,
+  AgeGroup,
+  AGE_GROUP_LABELS,
   STORY_THEME_LABELS,
   STORY_LENGTH_LABELS,
+  CHILD_STATUS_LABELS,
   type StoryListItem,
   type StoryGenerationConfig,
-} from '@/lib/types';
+} from "@/lib/types";
 
 export default function GeneratePage() {
   const [config, setConfig] = useState<StoryGenerationConfig>({
     theme: StoryTheme.LOVE_BONDING,
     length: StoryLength.STANDARD,
     faithPreference: FaithPreference.NON_RELIGIOUS,
-    parentOneName: '',
-    parentTwoName: '',
-    babyNickname: '',
-    dueDate: '',
+    parentOneName: "",
+    parentTwoName: "",
+    babyNickname: "",
+    dueDate: "",
+    childStatus: ChildStatus.PRENATAL,
     aiProvider: AIProvider.GEMINI,
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStory, setCurrentStory] = useState<StoryListItem | null>(null);
@@ -37,7 +62,7 @@ export default function GeneratePage() {
 
   const handleGenerate = async () => {
     if (!config.parentOneName.trim()) {
-      setError('Please enter at least one parent name');
+      setError("Please enter at least one parent name");
       return;
     }
 
@@ -47,21 +72,21 @@ export default function GeneratePage() {
     setIsDuplicate(false);
 
     try {
-      const response = await fetch('/api/stories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/stories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ config }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate story');
+        throw new Error("Failed to generate story");
       }
 
       const result = await response.json();
       setCurrentStory(result.story);
       setIsDuplicate(result.isDuplicate);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +97,7 @@ export default function GeneratePage() {
 
     try {
       const response = await fetch(`/api/stories/${currentStory.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
       });
 
       if (response.ok) {
@@ -80,7 +105,7 @@ export default function GeneratePage() {
         setCurrentStory(result.story);
       }
     } catch (err) {
-      console.error('Failed to toggle favorite:', err);
+      console.error("Failed to toggle favorite:", err);
     }
   };
 
@@ -123,22 +148,19 @@ export default function GeneratePage() {
                   size="icon"
                   onClick={handleToggleFavorite}
                   className={cn(
-                    'rounded-full',
+                    "rounded-full",
                     currentStory.isFavorite
-                      ? 'bg-red-50 text-red-500 dark:bg-red-900/30 dark:text-red-400'
-                      : ''
+                      ? "bg-red-50 text-red-500 dark:bg-red-900/30 dark:text-red-400"
+                      : "",
                   )}
                 >
                   <Heart
-                    className={currentStory.isFavorite ? 'fill-current' : ''}
+                    className={currentStory.isFavorite ? "fill-current" : ""}
                   />
                 </Button>
               </div>
 
-              <Button
-                variant="secondary"
-                onClick={() => setCurrentStory(null)}
-              >
+              <Button variant="secondary" onClick={() => setCurrentStory(null)}>
                 New Story
               </Button>
             </div>
@@ -152,7 +174,9 @@ export default function GeneratePage() {
   return (
     <div className="animate-fadeIn space-y-8">
       <header className="mt-8 space-y-2 text-center">
-        <h1 className="font-serif text-3xl text-foreground">Tonight&apos;s Story</h1>
+        <h1 className="font-serif text-3xl text-foreground">
+          Tonight&apos;s Story
+        </h1>
         <p className="text-muted-foreground">
           Create a moment of connection with your little one.
         </p>
@@ -167,6 +191,73 @@ export default function GeneratePage() {
 
       <Card className="mx-auto max-w-xl">
         <CardContent className="space-y-6 pt-6">
+          {/* Child Status Toggle */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Who is this story for?
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.values(ChildStatus).map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setConfig({ ...config, childStatus: status })}
+                  className={cn(
+                    "rounded-lg border p-3 text-center text-sm transition-all",
+                    config.childStatus === status
+                      ? "border-sage-500 bg-sage-50 text-sage-800 dark:bg-sage-900/50 dark:text-sage-100"
+                      : "border-border bg-transparent text-foreground hover:border-sage-300",
+                  )}
+                >
+                  {CHILD_STATUS_LABELS[status]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Age Group Selector (Only visible for Born status) */}
+          {config.childStatus === ChildStatus.BORN && (
+            <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="age-group"
+                  className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+                >
+                  Developmental Stage
+                </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help opacity-70 hover:opacity-100" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="w-64 text-xs">
+                        We use developmental stages instead of exact age to
+                        tailor the story&apos;s complexity and sensory focus.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Select
+                value={config.ageGroup}
+                onValueChange={(value) =>
+                  setConfig({ ...config, ageGroup: value as AgeGroup })
+                }
+              >
+                <SelectTrigger id="age-group" className="w-full">
+                  <SelectValue placeholder="Select stage..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(AgeGroup).map((age) => (
+                    <SelectItem key={age} value={age}>
+                      {AGE_GROUP_LABELS[age]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* Parent Names */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -217,10 +308,10 @@ export default function GeneratePage() {
                   key={theme}
                   onClick={() => setConfig({ ...config, theme })}
                   className={cn(
-                    'rounded-lg border p-3 text-left text-sm transition-all',
+                    "rounded-lg border p-3 text-left text-sm transition-all",
                     config.theme === theme
-                      ? 'border-sage-500 bg-sage-50 text-sage-800 dark:bg-sage-900/50 dark:text-sage-100'
-                      : 'border-border bg-transparent text-foreground hover:border-sage-300'
+                      ? "border-sage-500 bg-sage-50 text-sage-800 dark:bg-sage-900/50 dark:text-sage-100"
+                      : "border-border bg-transparent text-foreground hover:border-sage-300",
                   )}
                 >
                   {STORY_THEME_LABELS[theme]}
@@ -240,13 +331,13 @@ export default function GeneratePage() {
                   key={length}
                   onClick={() => setConfig({ ...config, length })}
                   className={cn(
-                    'rounded-lg border p-3 text-center text-sm transition-all',
+                    "rounded-lg border p-3 text-center text-sm transition-all",
                     config.length === length
-                      ? 'border-sage-500 bg-sage-50 text-sage-800 dark:bg-sage-900/50 dark:text-sage-100'
-                      : 'border-border bg-transparent text-foreground hover:border-sage-300'
+                      ? "border-sage-500 bg-sage-50 text-sage-800 dark:bg-sage-900/50 dark:text-sage-100"
+                      : "border-border bg-transparent text-foreground hover:border-sage-300",
                   )}
                 >
-                  {STORY_LENGTH_LABELS[length].split(' ')[0]}
+                  {STORY_LENGTH_LABELS[length].split(" ")[0]}
                 </button>
               ))}
             </div>
@@ -278,4 +369,3 @@ export default function GeneratePage() {
     </div>
   );
 }
-

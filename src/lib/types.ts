@@ -9,6 +9,11 @@ export enum FaithPreference {
   NON_RELIGIOUS = "non_religious",
 }
 
+export enum ChildStatus {
+  PRENATAL = "prenatal",
+  BORN = "born",
+}
+
 export enum StoryTheme {
   COLORS_SHAPES = "colors_shapes",
   LOVE_BONDING = "love_bonding",
@@ -33,6 +38,25 @@ export enum AIProvider {
 
 export const AI_PROVIDER_LABELS: Record<AIProvider, string> = {
   [AIProvider.GEMINI]: "Google Gemini",
+};
+
+export const CHILD_STATUS_LABELS: Record<ChildStatus, string> = {
+  [ChildStatus.PRENATAL]: "Expecting (Prenatal)",
+  [ChildStatus.BORN]: "Born (Postnatal)",
+};
+
+export enum AgeGroup {
+  NEWBORN = "newborn", // 0-3 months
+  INFANT = "infant", // 3-12 months
+  TODDLER = "toddler", // 1-3 years
+  PRESCHOOL = "preschool", // 3-5 years (future proofing)
+}
+
+export const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
+  [AgeGroup.NEWBORN]: "Newborn (0-3 months)",
+  [AgeGroup.INFANT]: "Infant (3-12 months)",
+  [AgeGroup.TODDLER]: "Toddler (1-3 years)",
+  [AgeGroup.PRESCHOOL]: "Preschool (3-5 years)",
 };
 
 // Human-readable labels for enums
@@ -82,6 +106,8 @@ export interface StoryGenerationConfig {
   parentTwoName?: string;
   babyNickname?: string;
   dueDate?: string;
+  childStatus?: ChildStatus;
+  ageGroup?: AgeGroup;
   aiProvider?: AIProvider;
 }
 
@@ -101,6 +127,7 @@ export interface GenerateStoryResponse {
     content: string;
     theme: StoryTheme;
     length: StoryLength;
+    childStatus: ChildStatus;
     wordCount: number;
     createdAt: string;
     isFavorite: boolean;
@@ -123,6 +150,8 @@ export interface UserProfileData {
   defaultTheme?: StoryTheme;
   defaultLength?: StoryLength;
   preferredAIProvider: AIProvider;
+  childStatus: ChildStatus;
+  birthDate?: string;
   darkMode: boolean;
   fontSize: "normal" | "large";
 }
@@ -135,6 +164,8 @@ export interface UpdateProfileRequest {
   faithPreference?: FaithPreference;
   defaultTheme?: StoryTheme;
   defaultLength?: StoryLength;
+  childStatus?: ChildStatus;
+  birthDate?: string;
   darkMode?: boolean;
   fontSize?: "normal" | "large";
 }

@@ -13,9 +13,13 @@ export async function GET() {
     // Attempt a lightweight query
     await db.$queryRaw`SELECT 1`;
     dbStatus = "connected";
-  } catch (e: any) {
+  } catch (e: unknown) {
     dbStatus = "failed";
-    dbError = e.message;
+    if (e instanceof Error) {
+      dbError = e.message;
+    } else {
+      dbError = "Unknown error occurred";
+    }
     console.error("Debug Route DB Error:", e);
   }
 

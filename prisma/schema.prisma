@@ -92,6 +92,9 @@ model UserProfile {
   defaultLength   String?   @map("default_length")
   darkMode        Boolean   @default(false) @map("dark_mode")
   fontSize        String    @default("normal") @map("font_size")
+  childStatus     String    @default("prenatal") @map("child_status")
+  ageGroup        String?   @map("age_group")
+  birthDate       DateTime? @map("birth_date")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
@@ -120,6 +123,8 @@ model Story {
   babyNickname    String?  @map("baby_nickname")
   dueDate         String?  @map("due_date")
   configHash      String   @map("config_hash")
+  childStatus     String   @default("prenatal") @map("child_status")
+  ageGroup        String?  @map("age_group")
   wordCount       Int      @map("word_count")
   isFavorite      Boolean  @default(false) @map("is_favorite")
   createdAt       DateTime @default(now()) @map("created_at")

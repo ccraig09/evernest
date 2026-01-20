@@ -1,7 +1,9 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
+import pg from "pg";
 
 // Important: Configure Neon to use WebSockets for serverless environments
 if (typeof window === "undefined") {
@@ -11,13 +13,16 @@ if (typeof window === "undefined") {
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString =
+    process.env.DATABASE_URL ||
+    "postgresql://dummy:dummy@localhost:5432/dummy";
 
   console.log("DB DEBUG: starting createPrismaClient (v7 simplified)");
 
-  if (!connectionString) {
-    console.error("DB DEBUG: DATABASE_URL is missing!");
-    throw new Error("DATABASE_URL environment variable is not set");
+  if (!process.env.DATABASE_URL) {
+    console.warn(
+      "DB DEBUG: DATABASE_URL is missing! Using dummy connection string for build/static generation.",
+    );
   }
 
   const logConfig: Prisma.LogLevel[] =
@@ -26,6 +31,25 @@ function createPrismaClient() {
       : ["error"];
 
   try {
+    // Check if we are running locally (localhost)
+    // If so, usage of the Neon adapter (WebSockets) might fail with standard Postgres containers
+    const isLocal =
+      connectionString.includes("localhost") ||
+      connectionString.includes("127.0.0.1");
+
+    if (isLocal) {
+      console.log(
+        "DB DEBUG: Detected local database, using Prisma Client with PG adapter",
+      );
+      const pool = new pg.Pool({ connectionString });
+      const adapter = new PrismaPg(pool);
+      return new PrismaClient({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        adapter: adapter as any,
+        log: logConfig,
+      });
+    }
+
     console.log(
       "DB DEBUG: Initializing PrismaNeon adapter with direct connectionString",
     );
@@ -33,8 +57,10 @@ function createPrismaClient() {
     const adapter = new PrismaNeon({ connectionString });
 
     return new PrismaClient({
-      adapter,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      adapter: adapter as any,
       log: logConfig,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
   } catch (error) {
     console.error("DB DEBUG: Failed to initialize PrismaClient:", error);

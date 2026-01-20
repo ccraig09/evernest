@@ -55,3 +55,6 @@ docker-compose.override.yml
 CURRENT_STATUS.md
 SETUP_TODO.md
 
+
+.gemini/
+gha-creds-*.json

@@ -1,42 +1,93 @@
 # Testing Strategy & Specification
 
 ## Overview
-This project prioritizes high-value End-to-End (E2E) flows and integration testing to ensure the critical user journey (Story Generation) works reliably.
 
-## Test Levels
+Comprehensive test suite with **109 tests** achieving **93.42% code coverage**. Tests include unit tests, integration tests, and component tests.
 
-### 1. Integration Tests (Critical)
-**Location**: Jest / `src/__tests__` (to be created)
-**Focus**: Verification of the AI Service and Database interactions.
+## Test Structure
 
-*   **Story Service spec**:
-    *   Should validate configuration input (Zod).
-    *   Should call AI provider (Gemini) with correct prompt.
-    *   Should save result to Database.
-
-### 2. Manual Verification / QA Scripts (Current Strategy)
-**Location**: `task.md` checklists and `walkthrough.md` proofs.
-**Flows**:
-1.  **Sign Up**: Create new account using Credentials auth.
-2.  **Generate**: Complete story wizard -> Call API -> Receive result.
-3.  **Review**: Verify story appears in dashboard list.
-
-## Future TDD Implementation
-To adopt TDD for future features, follow this workflow:
-
-1.  **Write Spec**: Define the feature in this file or a ticket.
-2.  **Write Test**: Create a `.test.ts` file in `src/__tests__/integration`.
-    ```typescript
-    it('should generate a story only when authenticated', async () => { ... })
-    ```
-3.  **Implement**: Write the code to pass the test.
-4.  **Refactor**: Cleanup.
+```
+src/__tests__/
+├── utils.test.ts           # Utility function tests
+├── setup/
+│   └── mocks.ts            # Shared test mocks
+├── unit/
+│   ├── schemas.test.ts     # Zod schema validation (28 tests)
+│   ├── ai-service.test.ts  # Prompt construction (26 tests)
+│   └── server-utils.test.ts # Config hashing (16 tests)
+├── integration/
+│   └── story-service.test.ts # CRUD operations (16 tests)
+└── components/
+    └── ui.test.tsx         # UI component rendering (11 tests)
+```
 
 ## Running Tests
+
 ```bash
-# Run unit/integration tests
+# Run all tests
 npm test
 
+# Run with coverage
+npm test -- --coverage
+
 # Run specific test file
-npm test -- src/lib/ai-service.test.ts
+npm test -- src/__tests__/unit/schemas.test.ts
+
+# Run tests in watch mode
+npm test -- --watch
 ```
+
+## Test Categories
+
+| Category    | Location       | Description                                     |
+| ----------- | -------------- | ----------------------------------------------- |
+| Unit        | `unit/`        | Pure function logic (schemas, prompts, hashing) |
+| Integration | `integration/` | Service layer with mocked DB/AI                 |
+| Component   | `components/`  | React component rendering                       |
+
+## Coverage Report
+
+| Metric     | Coverage |
+| ---------- | -------- |
+| Statements | 93.42%   |
+| Branches   | 96.55%   |
+| Functions  | 94.44%   |
+| Lines      | 93.42%   |
+
+## Writing New Tests
+
+### Unit Test Example
+
+```typescript
+import { storyGenerationConfigSchema } from "@/lib/schemas";
+
+describe("storyGenerationConfigSchema", () => {
+  it("should accept valid config", () => {
+    const result = storyGenerationConfigSchema.safeParse(validConfig);
+    expect(result.success).toBe(true);
+  });
+});
+```
+
+### Integration Test Example
+
+```typescript
+// Mock dependencies before imports
+jest.mock("@/lib/db", () => ({ db: { story: { findFirst: jest.fn() } } }));
+
+import { checkForDuplicate } from "@/server/story-service";
+
+describe("checkForDuplicate", () => {
+  it("should detect existing stories", async () => {
+    mockedDb.story.findFirst.mockResolvedValue({ id: "test" });
+    const result = await checkForDuplicate(userId, hash);
+    expect(result.isDuplicate).toBe(true);
+  });
+});
+```
+
+## Notes
+
+- **Jest + Next.js**: Uses `next/jest` for automatic configuration
+- **Mocking ESM**: `@google/genai` is mocked inline to avoid ESM transform issues
+- **Edge Runtime**: API routes and middleware require edge runtime and are tested manually
