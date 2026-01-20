@@ -13,13 +13,16 @@ if (typeof window === "undefined") {
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString =
+    process.env.DATABASE_URL ||
+    "postgresql://dummy:dummy@localhost:5432/dummy";
 
   console.log("DB DEBUG: starting createPrismaClient (v7 simplified)");
 
-  if (!connectionString) {
-    console.error("DB DEBUG: DATABASE_URL is missing!");
-    throw new Error("DATABASE_URL environment variable is not set");
+  if (!process.env.DATABASE_URL) {
+    console.warn(
+      "DB DEBUG: DATABASE_URL is missing! Using dummy connection string for build/static generation.",
+    );
   }
 
   const logConfig: Prisma.LogLevel[] =
