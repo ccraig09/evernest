@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- [2026-01-20 16:56 CST] Fixed TypeScript error in `ui.test.tsx` by adding missing `fireEvent` import.
 - [2026-01-20 16:50 CST] Completed escape of all remaining single quotes in `src/app/page.tsx` to resolve `react/no-unescaped-entities`.
 - [2026-01-20 16:47 CST] Fixed `react/no-unescaped-entities` error in `src/app/page.tsx` (escaped "mother's").
 - [2026-01-20 16:47 CST] Suppressed temporary `any` type warnings in `src/lib/db.ts` to clear CI checks.
