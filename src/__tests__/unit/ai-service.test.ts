@@ -51,7 +51,7 @@ describe("constructPrompt", () => {
     it("should use born persona when childStatus is BORN", () => {
       const config = { ...baseConfig, childStatus: ChildStatus.BORN };
       const prompt = constructPrompt(config);
-      expect(prompt).toContain("storyteller for a young baby");
+      expect(prompt).toContain("storyteller for a young child");
       expect(prompt).not.toContain("unborn");
     });
   });
@@ -113,7 +113,7 @@ describe("constructPrompt", () => {
         childStatus: ChildStatus.BORN,
       };
       const prompt = constructPrompt(config);
-      expect(prompt).toContain("random theme suitable for a young baby");
+      expect(prompt).toContain("random theme suitable for a young child");
     });
 
     it("should handle all theme types", () => {
