@@ -113,7 +113,7 @@ export default function HomePage() {
                   <p className="text-lg text-slate-600 italic mb-6">
                     &quot;EverNest started with a legacy my father left for me.
                     Before I was even born, he would read stories to me while I
-                    was still in my mother’s womb. He wasn’t just building a
+                    was still in my mother&apos;s womb. He wasn’t just building a
                     bond between us; he was introducing me to the world. Through
                     the rhythm of his voice, I began to learn about the
                     brilliance of colors, the shapes of the scenery, and the

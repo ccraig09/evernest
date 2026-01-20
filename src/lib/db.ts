@@ -44,6 +44,7 @@ function createPrismaClient() {
       const pool = new pg.Pool({ connectionString });
       const adapter = new PrismaPg(pool);
       return new PrismaClient({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         adapter: adapter as any,
         log: logConfig,
       });
@@ -56,8 +57,10 @@ function createPrismaClient() {
     const adapter = new PrismaNeon({ connectionString });
 
     return new PrismaClient({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       adapter: adapter as any,
       log: logConfig,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
   } catch (error) {
     console.error("DB DEBUG: Failed to initialize PrismaClient:", error);
