@@ -1,7 +1,9 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
+import pg from "pg";
 
 // Important: Configure Neon to use WebSockets for serverless environments
 if (typeof window === "undefined") {
@@ -26,6 +28,24 @@ function createPrismaClient() {
       : ["error"];
 
   try {
+    // Check if we are running locally (localhost)
+    // If so, usage of the Neon adapter (WebSockets) might fail with standard Postgres containers
+    const isLocal =
+      connectionString.includes("localhost") ||
+      connectionString.includes("127.0.0.1");
+
+    if (isLocal) {
+      console.log(
+        "DB DEBUG: Detected local database, using Prisma Client with PG adapter",
+      );
+      const pool = new pg.Pool({ connectionString });
+      const adapter = new PrismaPg(pool);
+      return new PrismaClient({
+        adapter,
+        log: logConfig,
+      });
+    }
+
     console.log(
       "DB DEBUG: Initializing PrismaNeon adapter with direct connectionString",
     );
