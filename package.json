@@ -11,7 +11,6 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "postinstall": "npx prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
