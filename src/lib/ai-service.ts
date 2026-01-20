@@ -6,12 +6,14 @@ import {
   StoryTheme,
   AIProvider,
   STORY_LENGTH_WORD_COUNTS,
+  ChildStatus,
+  AgeGroup,
 } from "./types";
 
 /**
  * Construct the story generation prompt based on config
  */
-function constructPrompt(config: StoryGenerationConfig): string {
+export function constructPrompt(config: StoryGenerationConfig): string {
   const {
     theme,
     length,
@@ -20,8 +22,12 @@ function constructPrompt(config: StoryGenerationConfig): string {
     parentTwoName,
     babyNickname,
     dueDate,
+    childStatus = ChildStatus.PRENATAL,
+    ageGroup,
   } = config;
   const wordCount = STORY_LENGTH_WORD_COUNTS[length];
+
+  const isBorn = childStatus === ChildStatus.BORN;
 
   // Faith/tone instruction
   let toneInstruction = "";
@@ -43,8 +49,9 @@ function constructPrompt(config: StoryGenerationConfig): string {
   // Theme context
   let themeContext = "";
   if (theme === StoryTheme.SURPRISE) {
-    themeContext =
-      "Choose a calming, random theme suitable for a baby in the womb.";
+    themeContext = isBorn
+      ? "Choose a calming, random theme suitable for a young child."
+      : "Choose a calming, random theme suitable for a baby in the womb.";
   } else {
     const themeLabels: Record<StoryTheme, string> = {
       [StoryTheme.COLORS_SHAPES]: "Colors & Shapes",
@@ -71,20 +78,49 @@ function constructPrompt(config: StoryGenerationConfig): string {
     parentContext = `The parent reading this is named ${parentOneName}.`;
   }
 
-  const dateContext = dueDate ? `The baby is expected around ${dueDate}.` : "";
+  const dateContext =
+    dueDate && !isBorn ? `The baby is expected around ${dueDate}.` : "";
+
+  // Age Group Logic
+  let ageInstruction = "";
+  if (isBorn && ageGroup) {
+    switch (ageGroup) {
+      case AgeGroup.NEWBORN: // 0-3 months
+        ageInstruction =
+          "For a Newborn (0-3 months): Focus on high-contrast imagery (black, white, red), slow pacing, and very simple, repetitive sounds. Use soothing rhythms.";
+        break;
+      case AgeGroup.INFANT: // 3-12 months
+        ageInstruction =
+          "For an Infant (3-12 months): Focus on naming familiar objects, simple actions (clapping, waving), and sensory descriptions (soft, bright, loud).";
+        break;
+      case AgeGroup.TODDLER: // 1-3 years
+        ageInstruction =
+          "For a Toddler (1-3 years): Include a simple narrative with a clear beginning, middle, and end. Use repetition, familiar routines, and involve the child (e.g., 'Can you see the moon?').";
+        break;
+      case AgeGroup.PRESCHOOL: // 3-5 years
+        ageInstruction =
+          "For a Preschooler (3-5 years): Use slightly more complex sentences, focus on emotions, friendship, and curiosity. Encourage imagination.";
+        break;
+    }
+  }
+
+  const personaInstruction = isBorn
+    ? `You are a gentle, warm, and poetic storyteller for a young child. Write a soothing bedtime story designed to be read aloud by parents. ${ageInstruction} Focus on helping the child discover the world through the senses.`
+    : `You are a gentle, warm, and poetic prenatal storytelling companion. Write a soothing bedtime story designed to be read aloud by parents to their unborn baby. Use descriptive language to build a bridge between the womb and the world, mentioning the beauty of light, the rhythm of voices, and the promise of a world full of colors, animals, and scenery.`;
 
   return `
-You are a gentle, warm, and poetic prenatal storytelling companion. 
-Write a soothing bedtime story designed to be read aloud by parents to their unborn baby.
+${personaInstruction}
 
 ${themeContext}
+Include sensory details: Mention gentle sounds (like a soft bell or wind), vivid colors (like soft gold or deep blue), and simple shapes (like the curve of a moon or a round bubble). If appropriate, weave in the presence of friendly animals or peaceful scenery.
 Keep the story between ${wordCount.min} and ${wordCount.max} words.
 ${toneInstruction}
 ${babyContext}
 ${parentContext}
 ${dateContext}
 
-The story should be rhythmic, calming, and foster a deep sense of safety and love.
+The story should be rhythmic, calming, and foster a deep sense of safety, curiosity, and love.
+Help the baby/child begin to "map" the wonderful world they are in or transitioning to.
 Avoid any scary elements, loud noises, or negative conflict.
 Use simple, melodic language.
 Ensure every sentence ends with proper punctuation.
@@ -99,7 +135,7 @@ Return the result strictly as a JSON object with the keys: "title" and "content"
  * Generate a story using Google Gemini
  */
 export async function generateStory(
-  config: StoryGenerationConfig
+  config: StoryGenerationConfig,
 ): Promise<StoryGenerationResult> {
   // Enforce Gemini usage
   if (!process.env.GEMINI_API_KEY) {
@@ -153,7 +189,7 @@ export async function generateStory(
   } catch (error) {
     console.error("Error generating story with Gemini:", error);
     throw new Error(
-      "Failed to generate a calm story. Please try again gently."
+      "Failed to generate a calm story. Please try again gently.",
     );
   }
 }
@@ -180,4 +216,3 @@ export function getDefaultProvider(): AIProvider {
 /**
  * Construct the story generation prompt based on config
  */
-
