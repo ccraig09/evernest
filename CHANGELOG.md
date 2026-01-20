@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- [2026-01-20 16:03 CST] Resolved Vercel build error `PrismaConfigEnvError` by explicitly setting `url = env("DATABASE_URL")` in `schema.prisma`.
-- [2026-01-20 16:03 CST] Added `postinstall: "prisma generate"` script to ensure Prisma Client is generated during deployment.
+- [2026-01-20 16:24 CST] Resolved Prisma 7 validation error (P1012) by removing `url` from `schema.prisma` (now handled by `prisma.config.ts`).
+- [2026-01-20 16:24 CST] Fixed `PrismaConfigEnvError` during build by using `process.env` instead of strict `env()` in `prisma.config.ts`.
+- [2026-01-20 16:03 CST] Resolved Vercel build error `PrismaConfigEnvError` by adding `postinstall: "prisma generate"` script.
 - [2026-01-20 15:35 CST] Resolved linting errors (unused imports in `route.ts`, `ui.test.tsx`, `server-utils.test.ts`).
 - [2026-01-20 15:35 CST] Fixed `any` type warnings in `debug-check/route.ts` and `db.ts`.
 - [2026-01-20 15:35 CST] Corrected unescaped entities in `src/app/page.tsx`.
