@@ -33,6 +33,21 @@ This living document tracks architectural decisions, technical debt, and strateg
     - [ ] **Strict Typing**: Ensure all `any` types are removed (checked via CI).
     - [ ] **Testing**: Maintain >80% coverage on core logic (`story-service`, `ai-service`).
 
+## 🎨 Strategic & UX Enhancements
+
+### 1. Brand Identity & Reach
+*   **Action Items**:
+    - [ ] **Domain Name**: Research and secure a permanent domain (e.g., `.com`, `.io`, `.ai`).
+    - [ ] **SEO**: Optimize landing page metadata for "prenatal storytelling" keywords.
+
+### 2. Narrative Continuity (Bridging Marketing & App)
+*   **Context**: The emotional "hook" (Founder's Story, Benefits) is currently lost after login.
+*   **Goal**: Weave the product's mission into the daily user experience.
+*   **Action Items**:
+    - [ ] **Mission Page**: Create an authenticated route (`/dashboard/mission`) containing the Founder's Note and "Why This Matters."
+    - [ ] **Contextual Loading**: Display "Did you know?" benefits (e.g., sensory mapping) during the story generation loading state.
+    - [ ] **Empty State**: Use the Founder's inspiration in the empty state for new users to encourage their first story.
+
 ## 🔮 Future Features (Backlog)
 
 *   **Audio Narration**: Use Text-to-Speech (Google/OpenAI) to read stories aloud.

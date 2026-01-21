@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-01-18
 
 ### Added
+- [2026-01-20 18:28 CST] Updated `ROADMAP.md` with Strategic & UX Enhancements (Domain Name, Narrative Continuity).
 - [2026-01-20 18:25 CST] Added `git-safety-commit` skill to enforce safe branching practices (prevents commits to `main`).
 - Initial project structure.
 - Authentication with NextAuth.js (Prisma Adapter).
