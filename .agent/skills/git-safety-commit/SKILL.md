@@ -1,37 +1,58 @@
 ---
 name: git-safety-commit
-description: Enforces a "save point" strategy before starting significant work. Use when beginning a new task, refactoring, or experimenting.
+description: A guardian skill that enforces safe git practices. It prevents direct commits to `main`, ensures proper branch naming, and validates the working tree state before operations.
 ---
 
-# Git Safety Commit (WIP)
+# Git Safety Guardian
 
-This skill enforces a safety-first development workflow by creating "save points" before potentially destructive or complex changes.
+This skill is the "Safety Officer" for your version control. It prevents common mistakes like working on `main` or losing changes during a switch.
 
 ## When to use this skill
 
-- **Starting a Task**: Before writing the first line of code for a new feature.
-- **Refactoring**: Before changing existing, working code.
-- **Experimenting**: Before trying an approach you aren't 100% sure about.
-- **Context Switching**: Before switching to a different task or branch.
+- **ALWAYS** before running `git commit`.
+- **ALWAYS** before running `git checkout -b` (creating a new branch).
+- When you are unsure of the current repository state.
 
-## How to use it
+## Rules & Enforcements
 
-1.  **Assess State**:
-    - Check `git status`. Are there uncommitted changes?
+1.  **NO Direct Commits to Main**:
+    - If `git branch --show-current` returns `main` or `master`: **ABORT**.
+    - **Action**: You must instruct the user to create a new branch: `git checkout -b [type]/[description]`.
 
-2.  **Create Save Point**:
-    - **Option A (WIP Commit)**: If staying on the current branch, commit current state:
-      ```bash
-      git add .
-      git commit -m "wip: save point before [task name]"
-      ```
-    - **Option B (New Branch)**: If the new task is distinct, create a fresh branch:
-      ```bash
-      git checkout -b feature/[task-name]
-      ```
+2.  **Branch Naming Convention**:
+    - Branches must follow the pattern: `type/description-slug`.
+    - **Valid Types**:
+        - `feat`: New features.
+        - `fix`: Bug fixes.
+        - `chore`: Maintenance, docs, build scripts.
+        - `refactor`: Code changes that neither fix a bug nor add a feature.
+        - `test`: Adding missing tests.
+    - **Example**: `feat/user-profile-page`, `fix/login-crash`, `chore/update-readme`.
 
-3.  **Proceed**:
-    - Now that a save point exists, you can safely make changes.
+3.  **Clean Working Tree**:
+    - Before switching branches (`checkout`), always run `git status`.
+    - If there are uncommitted changes, ask the user: "Stash or Commit?"
 
-4.  **Cleanup (Post-Task)**:
-    - Before merging, remember to squash "wip" commits into clean, atomic commits if necessary.
+## How to use it (The Protocol)
+
+1.  **Check Context**:
+    ```bash
+    git branch --show-current
+    git status
+    ```
+
+2.  **Validate**:
+    - IF branch == `main`: Stop. Suggest `git checkout -b ...`.
+    - IF changes exist AND request is to switch: Warning.
+
+3.  **Execute**:
+    - Only proceed with the user's requested git command if the safety checks pass.
+
+## Example Interaction
+
+**User**: "Commit these changes."
+**Agent (Internal Thought)**: *Checking branch... It is 'main'.*
+**Agent Response**: "🛑 **Safety Stop**: You are currently on the `main` branch. Direct commits to `main` are restricted to ensure stability.
+
+Please create a feature branch first. Shall I run:
+`git checkout -b feat/my-new-feature`?"
