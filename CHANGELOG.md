@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [2026-02-02 16:52 CST] Added auto-reply comments to `gemini-scheduled-triage.yml` - Gemini now posts its reasoning as a comment on each triaged issue for transparency.
+- [2026-02-02 16:52 CST] Added retry/resilience strategy to `gemini-scheduled-triage.yml` to handle transient GitHub runner failures gracefully.
+
 ### Fixed
+
 - [2026-01-20 17:04 CST] Updated `ai-service.test.ts` expectations to match "child" terminology used in the Born persona (fixing test failures).
 - [2026-01-20 16:56 CST] Fixed TypeScript error in `ui.test.tsx` by adding missing `fireEvent` import.
 - [2026-01-20 16:50 CST] Completed escape of all remaining single quotes in `src/app/page.tsx` to resolve `react/no-unescaped-entities`.
@@ -22,24 +28,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-01-20 15:35 CST] Corrected unescaped entities in `src/app/page.tsx`.
 
 ### Dev Notes
+
 - **Prisma Type Workaround**: In `src/lib/db.ts`, we are temporarily casting the `PrismaNeon` and `PrismaPg` adapters to `any`. This is due to a known type mismatch between the adapter packages and the main `PrismaClient` constructor in the current v7.x release candidate. This allows the build to pass but should be monitored for future stable releases.
 
 ## [0.1.0] - 2026-01-18
 
 ### Added
+
+- [2026-01-20 18:28 CST] Updated `ROADMAP.md` with Strategic & UX Enhancements (Domain Name, Narrative Continuity).
+- [2026-01-20 18:25 CST] Added `git-safety-commit` skill to enforce safe branching practices (prevents commits to `main`).
 - Initial project structure.
 - Authentication with NextAuth.js (Prisma Adapter).
 - Story Generation with Google Gemini AI.
 - "Prenatal Mode" core functionality.
 
 ### Changed
+
 - Refreshed Antigravity development flow.
 - Migrated database connection to Prisma 7 + Neon Serverless (Hybrid Config).
 - Optimized prompts for "Sonic/Rhythmic/Vibration" focus in womb stories.
 
 ### Fixed
+
 - Resolved Prisma 7 "No database host" error in Vercel production.
 - Fixed server-side rendering issues in Auth page.
 
 ---
+
 _Timezone: Central Standard Time (CST)_
