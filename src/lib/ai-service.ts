@@ -9,6 +9,7 @@ import {
   ChildStatus,
   AgeGroup,
 } from "./types";
+import { env } from "@/env";
 
 /**
  * Construct the story generation prompt based on config
@@ -138,11 +139,11 @@ export async function generateStory(
   config: StoryGenerationConfig,
 ): Promise<StoryGenerationResult> {
   // Enforce Gemini usage
-  if (!process.env.GEMINI_API_KEY) {
+  if (!env.GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY is not configured");
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
   const prompt = constructPrompt(config);
 
   try {
@@ -200,7 +201,7 @@ export async function generateStory(
 export function getAvailableProviders(): AIProvider[] {
   // Only Gemini is supported
   const providers: AIProvider[] = [];
-  if (process.env.GEMINI_API_KEY) {
+  if (env.GEMINI_API_KEY) {
     providers.push(AIProvider.GEMINI);
   }
   return providers;

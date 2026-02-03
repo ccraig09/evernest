@@ -133,7 +133,7 @@ export default function FamilyHistoryCard() {
                   </p>
                   {item.notes && (
                     <p className="mt-1 text-xs text-muted-foreground italic">
-                      "{item.notes}"
+                      &ldquo;{item.notes}&rdquo;
                     </p>
                   )}
                 </div>

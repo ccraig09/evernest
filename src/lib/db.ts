@@ -4,6 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import pg from "pg";
+import { env } from "@/env";
 
 // Important: Configure Neon to use WebSockets for serverless environments
 if (typeof window === "undefined") {
@@ -14,21 +15,18 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
   const connectionString =
-    process.env.DATABASE_URL ||
-    "postgresql://dummy:dummy@localhost:5432/dummy";
+    env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
 
   console.log("DB DEBUG: starting createPrismaClient (v7 simplified)");
 
-  if (!process.env.DATABASE_URL) {
+  if (!env.DATABASE_URL) {
     console.warn(
       "DB DEBUG: DATABASE_URL is missing! Using dummy connection string for build/static generation.",
     );
   }
 
   const logConfig: Prisma.LogLevel[] =
-    process.env.NODE_ENV === "development"
-      ? ["query", "error", "warn"]
-      : ["error"];
+    env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"];
 
   try {
     // Check if we are running locally (localhost)
@@ -70,6 +68,6 @@ function createPrismaClient() {
 
 export const db = globalForPrisma.prisma || createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== "production") {
   globalForPrisma.prisma = db;
 }
