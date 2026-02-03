@@ -35,7 +35,11 @@ export const env = createEnv({
    * Must be prefixed with NEXT_PUBLIC_
    */
   client: {
-    // Add NEXT_PUBLIC_ prefixed variables here as needed
+    NEXT_PUBLIC_SENTRY_DSN: z
+      .string()
+      .url()
+      .optional()
+      .describe("Sentry DSN for error tracking"),
   },
 
   /**
@@ -43,7 +47,7 @@ export const env = createEnv({
    * For Next.js >= 13.4.4, we can use experimental__runtimeEnv for client vars only
    */
   experimental__runtimeEnv: {
-    // Client-side variables would go here
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
 
   /**
