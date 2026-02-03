@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [2026-02-03 12:50 CST] Added **Family Medical History** feature to user profile - stores structured medical history as JSON in `UserProfile`.
+- [2026-02-03 12:49 CST] Installed `neon-postgres` agent skill for AI-assisted Neon database workflows.
 - [2026-02-02 16:52 CST] Added auto-reply comments to `gemini-scheduled-triage.yml` - Gemini now posts its reasoning as a comment on each triaged issue for transparency.
 - [2026-02-02 16:52 CST] Added retry/resilience strategy to `gemini-scheduled-triage.yml` to handle transient GitHub runner failures gracefully.
+
+### Changed
+
+- [2026-02-03 12:48 CST] **Migrated database from Docker to Neon Serverless Postgres** - removed `docker-compose.yml`, updated `prisma.config.ts` to load `.env.local`.
 
 ### Fixed
 
