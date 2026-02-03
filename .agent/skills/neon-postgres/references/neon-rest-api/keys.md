@@ -57,7 +57,7 @@ Example response:
 ```json
 {
   "id": 2291515,
-  "key": "napi_9tlr13774gizljemrr133j5koy3bmsphj8iu38mh0yjl9q4r1b0jy2wuhhuxouzr",
+  "key": "napi_EXAMPLE_KEY_REPLACE_WITH_YOUR_OWN",
   "name": "my-new-key",
   "created_at": "2025-09-10T09:47:59Z",
   "created_by": "487de658-08ba-4363-b387-86d18b9ad1c8"
