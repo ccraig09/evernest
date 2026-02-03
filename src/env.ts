@@ -1,62 +1,48 @@
-import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-export const env = createEnv({
-  /**
-   * Server-side environment variables (not available on client)
-   * Will throw if you access these variables on the client.
-   */
-  server: {
-    // Database
-    DATABASE_URL: z
-      .string()
-      .url()
-      .describe("Neon PostgreSQL connection string"),
+/**
+ * Type-safe environment variable validation using Zod.
+ */
 
-    // Auth.js
-    AUTH_SECRET: z
-      .string()
-      .min(32)
-      .describe("Auth.js secret key (min 32 chars)"),
-    AUTH_URL: z.string().url().optional().describe("Auth.js base URL"),
+const envSchema = z.object({
+  // Server-side
+  DATABASE_URL: z.string().url(),
+  AUTH_SECRET: z.string().min(32),
+  AUTH_URL: z.string().url().optional(),
+  GEMINI_API_KEY: z.string().min(1),
+  OPENAI_API_KEY: z.string().optional(),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
 
-    // AI Providers
-    GEMINI_API_KEY: z.string().min(1).describe("Google Gemini API key"),
-    OPENAI_API_KEY: z.string().optional().describe("OpenAI API key (optional)"),
-
-    // Node
-    NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
-  },
-
-  /**
-   * Client-side environment variables (available on both client and server)
-   * Must be prefixed with NEXT_PUBLIC_
-   */
-  client: {
-    NEXT_PUBLIC_SENTRY_DSN: z
-      .string()
-      .url()
-      .optional()
-      .describe("Sentry DSN for error tracking"),
-  },
-
-  /**
-   * Runtime environment mapping for Next.js bundler
-   * For Next.js >= 13.4.4, we can use experimental__runtimeEnv for client vars only
-   */
-  experimental__runtimeEnv: {
-    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  },
-
-  /**
-   * Skip validation in certain scenarios
-   */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-
-  /**
-   * Treat empty strings as undefined
-   */
-  emptyStringAsUndefined: true,
+  // Client-side (prefixed with NEXT_PUBLIC_)
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 });
+
+type Env = z.infer<typeof envSchema>;
+
+const processEnv = {
+  DATABASE_URL: process.env.DATABASE_URL,
+  AUTH_SECRET: process.env.AUTH_SECRET,
+  AUTH_URL: process.env.AUTH_URL,
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+};
+
+// Validate environment variables
+const parsed = envSchema.safeParse(processEnv);
+
+if (!parsed.success && process.env.NODE_ENV !== "test") {
+  console.error(
+    "❌ Invalid environment variables:",
+    JSON.stringify(parsed.error.format(), null, 2),
+  );
+
+  if (process.env.NODE_ENV === "production" || process.env.STRICT_ENV) {
+    throw new Error("Invalid environment variables");
+  }
+}
+
+export const env: Env = parsed.success ? parsed.data : (processEnv as Env);

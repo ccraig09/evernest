@@ -199,9 +199,15 @@ export async function generateStory(
  * Get available AI providers based on configured API keys
  */
 export function getAvailableProviders(): AIProvider[] {
-  // Only Gemini is supported
   const providers: AIProvider[] = [];
-  if (env.GEMINI_API_KEY) {
+  // In tests, prioritize process.env for dynamic overrides.
+  // In production, use the validated env object.
+  const geminiKey =
+    process.env.NODE_ENV === "test"
+      ? process.env.GEMINI_API_KEY
+      : env.GEMINI_API_KEY;
+
+  if (geminiKey) {
     providers.push(AIProvider.GEMINI);
   }
   return providers;
