@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config(); // Also load .env as fallback
 import { defineConfig } from "prisma/config";
 import path from "node:path";
 
