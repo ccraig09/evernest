@@ -21,6 +21,9 @@ export default withSentryConfig(nextConfig, {
   org: "personal-dev-7b",
   project: "evernest",
 
+  // Only upload source maps if a token is present
+  dryRun: !process.env.SENTRY_AUTH_TOKEN,
+
   // Combined options for maximum compatibility with older type definitions
   // if 3 arguments are not recognized.
   widenClientFileUpload: true,
