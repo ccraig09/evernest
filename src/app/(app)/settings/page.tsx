@@ -1,10 +1,17 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { Moon, Sun, Type } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { useTheme } from "next-themes";
+import { Moon, Sun, Type } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import FamilyHistoryCard from "@/components/settings/family-history-card";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -15,7 +22,7 @@ export default function SettingsPage() {
         <h1 className="font-serif text-2xl text-foreground">Settings</h1>
       </header>
 
-
+      <FamilyHistoryCard />
 
       <Card>
         <CardHeader>
@@ -30,20 +37,20 @@ export default function SettingsPage() {
           {/* Dark Mode Toggle */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 text-foreground">
-              {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+              {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
               <Label htmlFor="darkMode">Dark Mode</Label>
             </div>
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className={cn(
-                'h-6 w-12 rounded-full p-1 transition-colors duration-300',
-                theme === 'dark' ? 'bg-sage-600' : 'bg-muted'
+                "h-6 w-12 rounded-full p-1 transition-colors duration-300",
+                theme === "dark" ? "bg-sage-600" : "bg-muted",
               )}
             >
               <div
                 className={cn(
-                  'h-4 w-4 transform rounded-full bg-white transition-transform duration-300',
-                  theme === 'dark' ? 'translate-x-6' : ''
+                  "h-4 w-4 transform rounded-full bg-white transition-transform duration-300",
+                  theme === "dark" ? "translate-x-6" : "",
                 )}
               />
             </button>
@@ -84,4 +91,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
